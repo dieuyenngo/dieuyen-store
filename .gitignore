@@ -1,6 +1,7 @@
 .env
 yencloud-key.pem
 node_modules/
+pnpm-lock.yaml
 .env.local
 .env.production
 dist/
