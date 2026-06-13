@@ -1,0 +1,4 @@
+Work only in this folder
+create a website html with Hello world
+The website should have the allow_host configurable via .env
+create a docker deliver file so that we can create the image in locals

@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: yencloud
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yencloud_dev}
+      POSTGRES_DB: yencloud
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "5001:5000"
+    environment:
+      DATABASE_URL: postgresql://yencloud:${POSTGRES_PASSWORD:-yencloud_dev}@db:5432/yencloud
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-dev-admin-key-change-me}
+      NODE_ENV: production
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

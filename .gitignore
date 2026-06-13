@@ -1,0 +1,9 @@
+.env
+yencloud-key.pem
+node_modules/
+.env.local
+.env.production
+dist/
+*.pem
+*.log
+.DS_Store
