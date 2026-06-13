@@ -10,6 +10,7 @@ export default function ProductDetail() {
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     fetch(`/api/products/${slug}`)
       .then((r) => r.json())
@@ -50,14 +51,13 @@ export default function ProductDetail() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Product Not Found</h1>
-        <p className="mt-2 text-gray-500">The product you're looking for doesn't exist.</p>
+        <p className="mt-2 text-gray-500">The product you&apos;re looking for doesn&apos;t exist.</p>
         <Link to="/" className="mt-6 inline-block text-blue-600 hover:underline">Back to shop</Link>
       </div>
     );
   }
 
   const image = Array.isArray(product.images) ? product.images[0] : product.image;
-  const displayPrice = product.salePrice ?? product.originalPrice;
   const inStock = (product.stock ?? 1) > 0;
 
   return (

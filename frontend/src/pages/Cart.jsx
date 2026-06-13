@@ -25,7 +25,7 @@ export default function Cart() {
           Your cart is empty
         </h1>
         <p className="mt-2 text-gray-500">
-          Looks like you haven't added anything yet.
+          Looks like you haven&apos;t added anything yet.
         </p>
         <Link
           to="/"

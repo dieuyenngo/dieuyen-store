@@ -108,8 +108,11 @@ export default function Admin() {
 
   useEffect(() => {
     if (!authed) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     api("/api/admin/products").then(setProducts).catch(() => {});
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     api("/api/admin/orders").then(setOrders).catch(() => {});
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     api("/api/admin/refunds").then(setRefunds).catch(() => {});
   }, [authed, api]);
 
