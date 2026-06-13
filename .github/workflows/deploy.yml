@@ -11,20 +11,9 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-          cache-dependency-path: |
-            backend/package-lock.json
-            frontend/package-lock.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -49,41 +38,32 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Deploy to EC2 via SSM
-        env:
-          INSTANCE_ID: ${{ secrets.AWS_EC2_INSTANCE_ID }}
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ALLOWED_HOSTS: "localhost,127.0.0.1,13.60.72.108,dieuyen1807.com,www.dieuyen1807.com"
-        run: |
-          COMMANDS=$(cat <<EOF
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 13.60.72.108
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             set -e
             echo "=== Pulling new image ==="
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
-              docker login --username AWS --password-stdin $ECR_REGISTRY
-            docker pull $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+              docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+            docker pull ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
             echo "=== Restarting container ==="
             docker stop yencloud || true
             docker rm yencloud || true
             docker run -d --name yencloud --network host \
               -e NODE_ENV=production \
-              -e ALLOWED_HOSTS="${{ env.ALLOWED_HOSTS }}" \
+              -e DATABASE_URL="postgresql://yencloud:yencloud_prod@127.0.0.1:5432/yencloud" \
+              -e ALLOWED_HOSTS="localhost,127.0.0.1,13.60.72.108,dieuyen1807.com,www.dieuyen1807.com" \
               -e SSM_PARAMETER_PATH=/yencloud/production \
               -e AWS_REGION=${{ env.AWS_REGION }} \
               --restart unless-stopped \
-              $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+              ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
             echo "=== Verifying ==="
-            sleep 3
-            curl -sf http://localhost:5000/api/health || echo "Health check failed, checking logs..."
-            docker logs yencloud --tail 10
-          EOF
-          )
-
-          aws ssm send-command \
-            --region ${{ env.AWS_REGION }} \
-            --instance-ids "${{ env.INSTANCE_ID }}" \
-            --document-name "AWS-RunShellScript" \
-            --parameters commands="$COMMANDS" \
-            --comment "Deploy yencloud ${{ github.sha }}" \
-            --output text
+            sleep 5
+            curl -sS --max-time 5 http://localhost:5000/api/health
+            echo "Deploy complete"
