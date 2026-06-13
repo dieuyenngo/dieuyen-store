@@ -25,15 +25,19 @@ app.use((req, res, next) => {
   next();
 });
 
-import productsRouter from "./routes/products.js";
-import ordersRouter from "./routes/orders.js";
-import adminRouter from "./routes/admin.js";
-import uploadsRouter from "./routes/uploads.js";
+// Dynamic imports after loadSecrets so SSM params (e.g. DATABASE_URL)
+// are set in process.env before PrismaClient is constructed.
+const [productsRouter, ordersRouter, adminRouter, uploadsRouter] = await Promise.all([
+  import("./routes/products.js"),
+  import("./routes/orders.js"),
+  import("./routes/admin.js"),
+  import("./routes/uploads.js"),
+]);
 
-app.use("/api/products", productsRouter);
-app.use("/api/orders", ordersRouter);
-app.use("/api/admin", adminRouter);
-app.use("/api/uploads", uploadsRouter);
+app.use("/api/products", productsRouter.default);
+app.use("/api/orders", ordersRouter.default);
+app.use("/api/admin", adminRouter.default);
+app.use("/api/uploads", uploadsRouter.default);
 
 app.get("/api/categories", async (_req, res) => {
   const { PrismaClient } = await import("@prisma/client");
