@@ -17,6 +17,9 @@ router.post("/products", async (req, res) => {
   if (!data.name || !data.slug || !data.originalPrice || !data.category) {
     return res.status(400).json({ error: "Missing required fields" });
   }
+  if (data.barcode && !/^\d{8,13}$/.test(data.barcode)) {
+    return res.status(400).json({ error: "Barcode must be 8-13 digits" });
+  }
   const product = await prisma.product.create({ data });
   res.status(201).json(product);
 });

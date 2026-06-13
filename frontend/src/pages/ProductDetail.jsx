@@ -118,6 +118,9 @@ export default function ProductDetail() {
             ) : (
               <span className="text-sm text-red-500 font-medium">Out of Stock</span>
             )}
+            {product.barcode && (
+              <p className="text-xs text-gray-400 font-mono">Barcode: {product.barcode}</p>
+            )}
           </div>
 
           <div className="mt-8 flex gap-3">

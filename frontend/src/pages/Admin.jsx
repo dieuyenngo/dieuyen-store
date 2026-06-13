@@ -40,6 +40,7 @@ function ProductForm({ product, onSave, onCancel }) {
       originalPrice: Number(form.originalPrice),
       salePrice: form.salePrice ? Number(form.salePrice) : null,
       stock: Number(form.stock),
+      barcode: form.barcode || null,
       images: form.images ? form.images.split("\n").map((s) => s.trim()).filter(Boolean) : [],
     });
   }
@@ -55,6 +56,8 @@ function ProductForm({ product, onSave, onCancel }) {
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Original Price</label><input type="number" step="0.01" value={form.originalPrice} onChange={(e) => setForm({ ...form, originalPrice: e.target.value })} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Sale Price</label><input type="number" step="0.01" value={form.salePrice || ""} onChange={(e) => setForm({ ...form, salePrice: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Stock</label><input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
+      </div>
+        <div><label className="block text-sm font-medium text-gray-700 mb-1">Barcode</label><input type="text" value={form.barcode || ""} onChange={(e) => setForm({ ...form, barcode: e.target.value })} placeholder="8–13 digits" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
       </div>
       <div><label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
         <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
@@ -169,7 +172,7 @@ export default function Admin() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead><tr className="border-b border-gray-200 text-left text-gray-500"><th className="pb-3 pr-4">Name</th><th className="pb-3 pr-4">Category</th><th className="pb-3 pr-4">Price</th><th className="pb-3 pr-4">Stock</th><th className="pb-3"></th></tr></thead>
+              <thead><tr className="border-b border-gray-200 text-left text-gray-500"><th className="pb-3 pr-4">Name</th><th className="pb-3 pr-4">Category</th><th className="pb-3 pr-4">Price</th><th className="pb-3 pr-4">Stock</th><th className="pb-3 pr-4">Barcode</th><th className="pb-3"></th></tr></thead>
               <tbody>
                 {products.map((p) => (
                   <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
@@ -177,6 +180,7 @@ export default function Admin() {
                     <td className="py-3 pr-4 text-gray-500">{p.category}</td>
                     <td className="py-3 pr-4">${p.originalPrice.toFixed(2)}{p.salePrice ? ` (Sale: $${p.salePrice.toFixed(2)})` : ""}</td>
                     <td className="py-3 pr-4">{p.stock}</td>
+                    <td className="py-3 pr-4 font-mono text-xs text-gray-500">{p.barcode || "—"}</td>
                     <td className="py-3 flex gap-2">
                       <button onClick={() => { setEditing(p); setShowForm(true); }} className="text-blue-600 hover:underline">Edit</button>
                       <button onClick={() => deleteProduct(p.id)} className="text-red-500 hover:underline">Delete</button>
