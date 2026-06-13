@@ -148,3 +148,4 @@ yencloud/
 The app runs on a `t4g.micro` EC2 instance (Amazon Linux 2023) with Docker. Secrets are stored in AWS SSM Parameter Store under `/yencloud/production/` and loaded at startup. Nginx reverse-proxies port 80 → 5000 with Cloudflare handling SSL termination.
 
 See [infrastructure.md](./infrastructure.md) for details on S3, SSM, and IAM setup.
+
