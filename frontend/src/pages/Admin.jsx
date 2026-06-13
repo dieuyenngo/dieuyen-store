@@ -57,8 +57,7 @@ function ProductForm({ product, onSave, onCancel }) {
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Sale Price</label><input type="number" step="0.01" value={form.salePrice || ""} onChange={(e) => setForm({ ...form, salePrice: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
         <div><label className="block text-sm font-medium text-gray-700 mb-1">Stock</label><input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
       </div>
-        <div><label className="block text-sm font-medium text-gray-700 mb-1">Barcode</label><input type="text" value={form.barcode || ""} onChange={(e) => setForm({ ...form, barcode: e.target.value })} placeholder="8–13 digits" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
-      </div>
+      <div><label className="block text-sm font-medium text-gray-700 mb-1">Barcode</label><input type="text" value={form.barcode || ""} onChange={(e) => setForm({ ...form, barcode: e.target.value })} placeholder="8–13 digits" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" /></div>
       <div><label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
         <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
           {["Electronics", "Clothing", "Accessories", "Lifestyle"].map((c) => <option key={c}>{c}</option>)}
