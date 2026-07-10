@@ -15,4 +15,4 @@ COPY backend/ ./
 RUN npx prisma generate
 COPY --from=frontend-builder /build/frontend/dist ./public
 EXPOSE 5000
-CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js && node server.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node prisma/seed.js && node server.js"]
